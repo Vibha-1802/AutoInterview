@@ -1,3 +1,82 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "landing-hero",
+      "description": "Abstract technology background for landing page hero",
+      "imageUrl": "https://images.unsplash.com/photo-1700427296131-0cc4c4610fc6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHx0ZWNobm9sb2d5JTIwYWJzdHJhY3R8ZW58MHx8fHwxNzY4MjQ3MTczfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "technology abstract"
+    },
+    {
+      "id": "avatar-sde",
+      "description": "Avatar for Software Development Engineer role",
+      "imageUrl": "https://images.unsplash.com/photo-1627641439698-970b17262389?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxyb2JvdCUyMGRldmVsb3BlcnxlbnwwfHx8fDE3NjgzMTMzNjZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "robot developer"
+    },
+    {
+      "id": "avatar-frontend",
+      "description": "Avatar for Frontend Developer role",
+      "imageUrl": "https://images.unsplash.com/photo-1589967630952-add1bb9280e9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxyb2JvdCUyMHVpfGVufDB8fHx8MTc2ODMxMzM2N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "robot ui"
+    },
+    {
+      "id": "avatar-backend",
+      "description": "Avatar for Backend Developer role",
+      "imageUrl": "https://images.unsplash.com/photo-1593377202145-c5e97fd065f4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxyb2JvdCUyMHNlcnZlcnxlbnwwfHx8fDE3NjgzMTMzNjd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "robot server"
+    },
+    {
+      "id": "avatar-hr",
+      "description": "Avatar for HR role",
+      "imageUrl": "https://images.unsplash.com/photo-1767966787868-2db51cb84de5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxyb2JvdCUyMGh1bWFufGVufDB8fHx8MTc2ODI5NjUwNnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "robot human"
+    },
+    {
+      "id": "avatar-cloud",
+      "description": "Avatar for Cloud Engineer role",
+      "imageUrl": "https://images.unsplash.com/photo-1749996904737-4cfabf9ade9e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyb2JvdCUyMGNsb3VkfGVufDB8fHx8MTc2ODMxMzM2N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "robot cloud"
+    },
+    {
+      "id": "avatar-devops",
+      "description": "Avatar for DevOps Engineer role",
+      "imageUrl": "https://images.unsplash.com/photo-1581916102388-eae1149ca53f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxyb2JvdCUyMGdlYXJzfGVufDB8fHx8MTc2ODMxMzM2N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "robot gears"
+    },
+    {
+      "id": "user-avatar",
+      "description": "Generic user avatar for hiring manager",
+      "imageUrl": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxwZXJzb24lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjgyMzk0NDl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "candidate-1",
+      "description": "Avatar for candidate John Doe",
+      "imageUrl": "https://images.unsplash.com/photo-1573496267478-37727ee5b694?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8cGVyc29uJTIwZGV2ZWxvcGVyfGVufDB8fHx8MTc2ODI5MDc5NXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "person developer"
+    },
+    {
+      "id": "candidate-2",
+      "description": "Avatar for candidate Jane Smith",
+      "imageUrl": "https://images.unsplash.com/photo-1573495804683-641191e042ea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHx3b21hbiUyMGRldmVsb3BlcnxlbnwwfHx8fDE3NjgyMjcyNjF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman developer"
+    },
+    {
+      "id": "candidate-3",
+      "description": "Avatar for candidate Alex Johnson",
+      "imageUrl": "https://images.unsplash.com/photo-1594478838536-bdc0f85dee3f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxwZXJzb24lMjB0ZWNofGVufDB8fHx8MTc2ODMxMzM2N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "person tech"
+    },
+    {
+      "id": "candidate-4",
+      "description": "Avatar for candidate Priya Sharma",
+      "imageUrl": "https://images.unsplash.com/photo-1573497620166-aef748c8c792?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8d29tYW4lMjBlbmdpbmVlcnxlbnwwfHx8fDE3NjgzMTMzNjd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman engineer"
+    },
+    {
+      "id": "candidate-5",
+      "description": "Avatar for candidate Michael Brown",
+      "imageUrl": "https://images.unsplash.com/photo-1562788869-4ed32648eb72?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxtYW4lMjBwcm9mZXNzaW9uYWx8ZW58MHx8fHwxNzY4Mjk0NzY3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "man professional"
+    }
+  ]
 }
