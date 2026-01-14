@@ -20,19 +20,19 @@ export default function CandidateSummaryPage({ params }: { params: { id: string 
   }
 
   const recommendationBadges = {
-    'Strong Hire': 'bg-green-500 hover:bg-green-600',
-    'Hire': 'bg-blue-500 hover:bg-blue-600',
-    'Maybe': 'bg-yellow-500 hover:bg-yellow-600',
-    'No Hire': 'bg-red-500 hover:bg-red-600',
+    'Strong Hire': 'bg-success hover:bg-success/90',
+    'Hire': 'bg-primary hover:bg-primary/90',
+    'Maybe': 'bg-warning hover:bg-warning/90',
+    'No Hire': 'bg-error hover:bg-error/90',
   }
 
   return (
     <>
       <PageHeader title="Interview Summary">
-        <Button variant="outline">
+        <Button variant="outline" className='text-error border-error hover:bg-error hover:text-white'>
           <ThumbsDown className="mr-2 h-4 w-4" /> Reject
         </Button>
-        <Button>
+        <Button variant='success'>
           <ThumbsUp className="mr-2 h-4 w-4" /> Accept
         </Button>
       </PageHeader>
@@ -45,8 +45,8 @@ export default function CandidateSummaryPage({ params }: { params: { id: string 
                 <AvatarFallback>{candidate.name.substring(0, 2)}</AvatarFallback>
               </Avatar>
               <div>
-                <CardTitle className="font-headline text-2xl">{candidate.name}</CardTitle>
-                <p className="text-muted-foreground">{candidate.role}</p>
+                <CardTitle className="font-bold text-2xl">{candidate.name}</CardTitle>
+                <p className="text-secondary">{candidate.role}</p>
               </div>
               <Badge className={cn("ml-auto text-white", recommendationBadges[summary.recommendation])}>
                 {summary.recommendation}
@@ -87,18 +87,18 @@ export default function CandidateSummaryPage({ params }: { params: { id: string 
                   <CardTitle>AI-Generated Summary</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground">{summary.summary}</p>
+                  <p className="text-secondary">{summary.summary}</p>
                 </CardContent>
               </Card>
             </TabsContent>
             <TabsContent value="transcript">
               <Card>
                  <CardHeader><CardTitle>Interview Transcript</CardTitle></CardHeader>
-                 <CardContent className="space-y-4">
+                 <CardContent className="space-y-4 bg-background p-4 rounded-lg">
                     {summary.transcript.map((line, i) => (
                         <div key={i} className={cn("flex items-start gap-3", line.speaker === 'Candidate' && 'justify-end')}>
                             {line.speaker === 'AI' && <Avatar className="h-8 w-8"><AvatarFallback>AI</AvatarFallback></Avatar>}
-                            <p className={cn("max-w-md rounded-lg p-3", line.speaker === 'AI' ? 'bg-muted' : 'bg-primary text-primary-foreground')}>{line.text}</p>
+                            <p className={cn("max-w-md rounded-lg p-3", line.speaker === 'AI' ? 'bg-accent' : 'bg-muted')}>{line.text}</p>
                             {line.speaker === 'Candidate' && <Avatar className="h-8 w-8"><AvatarImage src={candidate.avatarUrl} /></Avatar>}
                         </div>
                     ))}
@@ -109,7 +109,7 @@ export default function CandidateSummaryPage({ params }: { params: { id: string 
                <Card>
                  <CardHeader><CardTitle>Code Submission</CardTitle></CardHeader>
                  <CardContent>
-                    <pre className="bg-muted p-4 rounded-md font-code text-sm overflow-x-auto">
+                    <pre className="bg-gray-800 text-white p-4 rounded-md font-code text-sm overflow-x-auto">
                         <code>{summary.codeSubmission}</code>
                     </pre>
                  </CardContent>
@@ -124,7 +124,7 @@ export default function CandidateSummaryPage({ params }: { params: { id: string 
               <CardTitle>Strengths</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">{summary.strengths}</p>
+              <p className="text-secondary">{summary.strengths}</p>
             </CardContent>
           </Card>
           <Card>
@@ -132,7 +132,7 @@ export default function CandidateSummaryPage({ params }: { params: { id: string 
               <CardTitle>Weaknesses</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">{summary.weaknesses}</p>
+              <p className="text-secondary">{summary.weaknesses}</p>
             </CardContent>
           </Card>
           <Card>
@@ -140,7 +140,7 @@ export default function CandidateSummaryPage({ params }: { params: { id: string 
               <CardTitle>Overall Suitability</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">{summary.overallSuitability}</p>
+              <p className="text-secondary">{summary.overallSuitability}</p>
             </CardContent>
           </Card>
         </div>

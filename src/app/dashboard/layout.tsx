@@ -62,10 +62,10 @@ export default function DashboardLayout({
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
-        <header className="flex h-16 items-center justify-between border-b px-6">
+        <header className="flex h-16 items-center justify-between border-b bg-card px-6">
           <div className='flex items-center gap-4'>
             <SidebarTrigger />
-            <h2 className="text-lg font-semibold font-headline">Hiring Dashboard</h2>
+            <h2 className="text-lg font-bold">Hiring Dashboard</h2>
           </div>
           <div className="flex items-center gap-4">
             <Button>
