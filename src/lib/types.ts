@@ -16,6 +16,12 @@ export type Score = {
   overall: number;
 };
 
+export type RoundScore = {
+  round1: number | null;
+  round2: number | null;
+  round3: number | null;
+}
+
 export type Candidate = {
   id: string;
   name: string;
@@ -24,8 +30,9 @@ export type Candidate = {
   avatarHint: string;
   role: string;
   interviewDate: string;
-  status: 'Completed' | 'Scheduled' | 'In-Progress' | 'Expired';
+  status: 'Completed' | 'Scheduled' | 'In-Progress' | 'Expired' | 'Failed Round 1' | 'Failed Round 2';
   score?: Score;
+  roundScores?: RoundScore;
   interviewId: string;
 };
 
@@ -40,3 +47,12 @@ export type InterviewSummary = {
   transcript: { speaker: 'AI' | 'Candidate'; text: string }[];
   codeSubmission: string;
 };
+
+export type Question = {
+  id: string;
+  text: string;
+  topic: string;
+  type: 'coding' | 'mcq' | 'short-answer' | 'system-design';
+  options?: string[];
+  answer?: string;
+}

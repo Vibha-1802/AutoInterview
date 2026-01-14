@@ -8,23 +8,38 @@ import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { candidates, interviewSummaries } from '@/lib/data';
 import { PageHeader } from '@/components/page-header';
-import { Check, ThumbsDown, ThumbsUp } from 'lucide-react';
+import { Check, ThumbsDown, ThumbsUp, XCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function CandidateSummaryPage({ params }: { params: { id: string } }) {
   const candidate = candidates.find((c) => c.id === params.id);
   const summary = interviewSummaries.find((s) => s.candidateId === params.id);
 
-  if (!candidate || !summary || !candidate.score) {
+  if (!candidate) {
     notFound();
   }
 
-  const recommendationBadges = {
+  const recommendationBadges: { [key: string]: string } = {
     'Strong Hire': 'bg-success hover:bg-success/90',
     'Hire': 'bg-primary hover:bg-primary/90',
     'Maybe': 'bg-warning hover:bg-warning/90',
     'No Hire': 'bg-error hover:bg-error/90',
   }
+
+  const getOverallScore = () => {
+    if (!candidate.roundScores || !candidate.score) return { score: 0, text: 'Not Graded' };
+
+    const { round1, round2, round3 } = candidate.roundScores;
+    const overall = candidate.score.overall;
+
+    if (candidate.status === 'Failed Round 1') return { score: round1 || 0, text: `Failed Round 1 with ${round1}` }
+    if (candidate.status === 'Failed Round 2') return { score: round2 || 0, text: `Failed Round 2 with ${round2}` }
+    if (candidate.status === 'Completed') return { score: overall, text: 'Completed' }
+
+    return { score: overall, text: `Overall: ${overall}/100` };
+  }
+
+  const overall = getOverallScore();
 
   return (
     <>
@@ -48,13 +63,13 @@ export default function CandidateSummaryPage({ params }: { params: { id: string 
                 <CardTitle className="font-bold text-2xl">{candidate.name}</CardTitle>
                 <p className="text-secondary">{candidate.role}</p>
               </div>
-              <Badge className={cn("ml-auto text-white", recommendationBadges[summary.recommendation])}>
+              {summary && <Badge className={cn("ml-auto text-white", recommendationBadges[summary.recommendation])}>
                 {summary.recommendation}
-              </Badge>
+              </Badge>}
             </CardHeader>
             <CardContent>
-              <h3 className="font-semibold mb-4">Overall Score: {candidate.score.overall}/100</h3>
-              <div className="space-y-4">
+              <h3 className="font-semibold mb-4">{overall.text}</h3>
+              {candidate.score && <div className="space-y-4">
                 <div>
                   <div className="flex justify-between mb-1"><span>Technical</span><span>{candidate.score.technical}</span></div>
                   <Progress value={candidate.score.technical} />
@@ -71,11 +86,39 @@ export default function CandidateSummaryPage({ params }: { params: { id: string 
                   <div className="flex justify-between mb-1"><span>Culture Fit</span><span>{candidate.score.cultureFit}</span></div>
                   <Progress value={candidate.score.cultureFit} />
                 </div>
+              </div>}
+            </CardContent>
+          </Card>
+          
+          <Card className="mt-8">
+            <CardHeader>
+              <CardTitle>Round-by-Round Breakdown</CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+              <div className={cn("p-4 rounded-lg", candidate.roundScores?.round1 ? (candidate.roundScores.round1 >= 60 ? 'bg-success/10' : 'bg-error/10') : 'bg-muted')}>
+                <h4 className="font-bold">Round 1: DSA</h4>
+                {candidate.roundScores?.round1 !== null && candidate.roundScores?.round1 !== undefined ? (
+                  <p className="text-3xl font-bold">{candidate.roundScores.round1}</p>
+                ) : <p className="text-secondary">N/A</p>}
+                {candidate.roundScores?.round1 ? (candidate.roundScores.round1 >= 60 ? <p className="text-sm text-success">Passed</p> : <p className="text-sm text-error">Failed</p>): null}
+              </div>
+              <div className={cn("p-4 rounded-lg", candidate.roundScores?.round2 ? (candidate.roundScores.round2 >= 65 ? 'bg-success/10' : 'bg-error/10') : 'bg-muted')}>
+                <h4 className="font-bold">Round 2: CS Fundamentals</h4>
+                {candidate.roundScores?.round2 !== null && candidate.roundScores?.round2 !== undefined ? (
+                  <p className="text-3xl font-bold">{candidate.roundScores.round2}</p>
+                ) : <p className="text-secondary">N/A</p>}
+                {candidate.roundScores?.round2 ? (candidate.roundScores.round2 >= 65 ? <p className="text-sm text-success">Passed</p> : <p className="text-sm text-error">Failed</p>): null}
+              </div>
+              <div className={cn("p-4 rounded-lg", candidate.roundScores?.round3 ? 'bg-accent' : 'bg-muted')}>
+                <h4 className="font-bold">Round 3: System Design</h4>
+                {candidate.roundScores?.round3 !== null && candidate.roundScores?.round3 !== undefined ? (
+                  <p className="text-3xl font-bold">{candidate.roundScores.round3}</p>
+                ) : <p className="text-secondary">N/A</p>}
               </div>
             </CardContent>
           </Card>
 
-          <Tabs defaultValue="summary" className="mt-8">
+          {summary && <Tabs defaultValue="summary" className="mt-8">
             <TabsList>
               <TabsTrigger value="summary">AI Summary</TabsTrigger>
               <TabsTrigger value="transcript">Transcript</TabsTrigger>
@@ -115,10 +158,10 @@ export default function CandidateSummaryPage({ params }: { params: { id: string 
                  </CardContent>
                </Card>
             </TabsContent>
-          </Tabs>
+          </Tabs>}
 
         </div>
-        <div className="lg:col-span-1 space-y-6">
+        {summary && <div className="lg:col-span-1 space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Strengths</CardTitle>
@@ -143,7 +186,7 @@ export default function CandidateSummaryPage({ params }: { params: { id: string 
               <p className="text-secondary">{summary.overallSuitability}</p>
             </CardContent>
           </Card>
-        </div>
+        </div>}
       </div>
     </>
   );

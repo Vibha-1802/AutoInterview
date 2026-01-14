@@ -1,78 +1,99 @@
-import { notFound } from "next/navigation";
+'use client';
+
+import { notFound, useRouter } from "next/navigation";
+import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { avatars, candidates } from "@/lib/data";
-import { Bot, Send, Timer } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { candidates } from "@/lib/data";
+import { Bot, Check, Timer, X } from "lucide-react";
+import { Round1DSA } from "@/components/interview/round-1-dsa";
+import { Round2CS } from "@/components/interview/round-2-cs";
+import { Round3SystemDesign } from "@/components/interview/round-3-system-design";
+
+const roundComponents = {
+  1: Round1DSA,
+  2: Round2CS,
+  3: Round3SystemDesign,
+};
+
+const roundPassScores = {
+  1: 60,
+  2: 65,
+  3: 0, // Round 3 is the final round
+};
 
 export default function InterviewPage({ params }: { params: { id: string } }) {
+  const router = useRouter();
   const candidate = candidates.find(c => c.interviewId === params.id);
-  const avatar = avatars.find(a => a.role === candidate?.role);
 
-  if (!candidate || !avatar) {
+  const [currentRound, setCurrentRound] = useState(1);
+  const [roundScores, setRoundScores] = useState<{ [key: number]: number }>({});
+  const [showTransition, setShowTransition] = useState(false);
+  const [passed, setPassed] = useState(false);
+
+  if (!candidate) {
     notFound();
   }
 
+  const handleRoundComplete = (score: number) => {
+    setRoundScores(prev => ({ ...prev, [currentRound]: score }));
+    const pass = score >= roundPassScores[currentRound as keyof typeof roundPassScores];
+    setPassed(pass);
+    setShowTransition(true);
+  };
+
+  const handleContinue = () => {
+    setShowTransition(false);
+    if (passed && currentRound < 3) {
+      setCurrentRound(currentRound + 1);
+    } else {
+      // Logic to end interview and show final summary
+      router.push(`/dashboard/candidates/${candidate.id}`);
+    }
+  };
+
+  const RoundComponent = roundComponents[currentRound as keyof typeof roundComponents];
+
   return (
-    <div className="container mx-auto h-full p-4">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-[calc(100vh-120px)]">
-        
-        <div className="flex flex-col rounded-lg border bg-card">
-          <div className="flex items-center justify-between p-4 border-b">
-            <div className="flex items-center gap-3">
-              <Avatar>
-                <AvatarImage src={avatar.imageUrl} alt={avatar.name} data-ai-hint={avatar.imageHint} />
-                <AvatarFallback><Bot /></AvatarFallback>
-              </Avatar>
-              <div>
-                <h2 className="font-semibold">{avatar.name}</h2>
-                <p className="text-sm text-secondary">Your AI Interviewer</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-secondary">
-                <Timer className="h-4 w-4" />
-                <span>45:00</span>
+    <>
+      <div className="container mx-auto h-full p-4 flex flex-col">
+        <header className="mb-4">
+          <div className="flex justify-between items-center">
+            <h1 className="text-xl font-bold">Round {currentRound}/3: {currentRound === 1 ? 'Data Structures & Algorithms' : currentRound === 2 ? 'CS Fundamentals' : 'System Design'}</h1>
+            <div className="flex items-center gap-2 text-sm font-semibold text-secondary">
+              <Timer className="h-4 w-4" />
+              <span>{currentRound === 1 ? '30:00' : currentRound === 2 ? '25:00' : '20:00'}</span>
             </div>
           </div>
-          
-          <div className="flex-1 p-6 space-y-6 overflow-y-auto">
-            <div className="flex items-start gap-3">
-              <Avatar className="h-8 w-8"><AvatarFallback>AI</AvatarFallback></Avatar>
-              <div className="space-y-2">
-                <p className="max-w-md rounded-lg p-3 bg-accent">Welcome, {candidate.name}! This interview is for the {candidate.role} position. We'll start with a few technical questions. Are you ready?</p>
-                <p className="max-w-md rounded-lg p-3 bg-accent">Let's begin. Please explain the difference between `let`, `const`, and `var` in JavaScript.</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3 justify-end">
-              <p className="max-w-md rounded-lg p-3 bg-muted text-card-foreground">Yes, I'm ready. `var` is function-scoped, while `let` and `const` are block-scoped. `const` cannot be reassigned.</p>
-              <Avatar className="h-8 w-8"><AvatarImage src={candidate.avatarUrl} alt={candidate.name} /></Avatar>
-            </div>
-          </div>
+          <Progress value={(currentRound / 3) * 100} className="mt-2" />
+        </header>
 
-          <div className="p-4 border-t bg-card">
-            <div className="relative">
-              <Textarea placeholder="Type your answer here..." className="pr-20"/>
-              <Button type="submit" size="icon" className="absolute top-1/2 -translate-y-1/2 right-3">
-                <Send className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-col">
-            <Card className="h-full">
-                <CardHeader>
-                    <CardTitle>Code Editor</CardTitle>
-                </CardHeader>
-                <CardContent className="h-full">
-                    <div className="h-full rounded-md border bg-gray-800 p-4 font-code text-sm text-gray-200 flex items-center justify-center">
-                        Your coding challenge will appear here.
-                    </div>
-                </CardContent>
-            </Card>
-        </div>
+        <main className="flex-1">
+          <RoundComponent onRoundComplete={handleRoundComplete} />
+        </main>
       </div>
-    </div>
+
+      <AlertDialog open={showTransition}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              {passed ? <Check className="text-success h-8 w-8" /> : <X className="text-error h-8 w-8" />}
+              Round {currentRound} {passed ? 'Passed' : 'Failed'}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Your score for this round is: <span className="font-bold text-2xl text-primary">{roundScores[currentRound]}</span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={handleContinue}>
+              {passed && currentRound < 3 ? `Continue to Round ${currentRound + 1}` : 'View Final Summary'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }

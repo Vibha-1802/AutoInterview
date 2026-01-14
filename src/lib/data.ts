@@ -29,6 +29,7 @@ export const candidates: Candidate[] = [
     interviewDate: '2024-08-15',
     status: 'Completed',
     score: { technical: 92, communication: 85, problemSolving: 88, cultureFit: 90, overall: 89 },
+    roundScores: { round1: 90, round2: 85, round3: 92 },
     interviewId: 'interview-1',
   },
   {
@@ -41,6 +42,7 @@ export const candidates: Candidate[] = [
     interviewDate: '2024-08-14',
     status: 'Completed',
     score: { technical: 78, communication: 90, problemSolving: 82, cultureFit: 85, overall: 84 },
+    roundScores: { round1: 75, round2: 90, round3: 80 },
     interviewId: 'interview-2',
   },
   {
@@ -62,8 +64,9 @@ export const candidates: Candidate[] = [
     avatarHint: findImage('candidate-4').hint,
     role: 'SDE-DSA',
     interviewDate: '2024-08-12',
-    status: 'Completed',
-    score: { technical: 65, communication: 75, problemSolving: 70, cultureFit: 80, overall: 72 },
+    status: 'Failed Round 1',
+    score: { technical: 55, communication: 75, problemSolving: 60, cultureFit: 80, overall: 58 },
+    roundScores: { round1: 55, round2: null, round3: null },
     interviewId: 'interview-4',
   },
   {

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Bot, LayoutDashboard, PlusCircle, Settings, Users } from 'lucide-react';
+import { Bot, LayoutDashboard, PlusCircle, Settings, Users, FileText } from 'lucide-react';
 import {
   SidebarProvider,
   Sidebar,
@@ -19,6 +19,7 @@ import { Logo } from '@/components/logo';
 import { UserNav } from '@/components/user-nav';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 export default function DashboardLayout({
   children,
@@ -31,52 +32,55 @@ export default function DashboardLayout({
     { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { href: '/dashboard/avatars', icon: Bot, label: 'Avatars' },
     { href: '/dashboard/candidates', icon: Users, label: 'Candidates' },
+    { href: '/dashboard/questions', icon: FileText, label: 'Questions' },
     { href: '/dashboard/settings', icon: Settings, label: 'Settings' },
   ];
 
   return (
-    <SidebarProvider>
-      <Sidebar>
-        <SidebarHeader>
-          <Logo />
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarMenu>
-            {navItems.map((item) => (
-              <SidebarMenuItem key={item.href}>
-                <Link href={item.href}>
-                  <SidebarMenuButton
-                    isActive={pathname === item.href}
-                    tooltip={item.label}
-                  >
-                    <item.icon />
-                    <span>{item.label}</span>
-                  </SidebarMenuButton>
-                </Link>
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-        </SidebarContent>
-        <SidebarFooter>
-          <UserNav />
-        </SidebarFooter>
-      </Sidebar>
-      <SidebarInset>
-        <header className="flex h-16 items-center justify-between border-b bg-card px-6">
-          <div className='flex items-center gap-4'>
-            <SidebarTrigger />
-            <h2 className="text-lg font-bold">Hiring Dashboard</h2>
-          </div>
-          <div className="flex items-center gap-4">
-            <Button>
-              <PlusCircle className="mr-2" />
-              Schedule Interview
-            </Button>
+    <FirebaseClientProvider>
+      <SidebarProvider>
+        <Sidebar>
+          <SidebarHeader>
+            <Logo />
+          </SidebarHeader>
+          <SidebarContent>
+            <SidebarMenu>
+              {navItems.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                  <Link href={item.href}>
+                    <SidebarMenuButton
+                      isActive={pathname.startsWith(item.href) && (item.href !== '/dashboard' || pathname === '/dashboard')}
+                      tooltip={item.label}
+                    >
+                      <item.icon />
+                      <span>{item.label}</span>
+                    </SidebarMenuButton>
+                  </Link>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarContent>
+          <SidebarFooter>
             <UserNav />
-          </div>
-        </header>
-        <main className="flex-1 p-6">{children}</main>
-      </SidebarInset>
-    </SidebarProvider>
+          </SidebarFooter>
+        </Sidebar>
+        <SidebarInset>
+          <header className="flex h-16 items-center justify-between border-b bg-card px-6">
+            <div className='flex items-center gap-4'>
+              <SidebarTrigger />
+              <h2 className="text-lg font-bold">Hiring Dashboard</h2>
+            </div>
+            <div className="flex items-center gap-4">
+              <Button>
+                <PlusCircle className="mr-2" />
+                Schedule Interview
+              </Button>
+              <UserNav />
+            </div>
+          </header>
+          <main className="flex-1 p-6">{children}</main>
+        </SidebarInset>
+      </SidebarProvider>
+    </FirebaseClientProvider>
   );
 }

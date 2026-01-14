@@ -9,66 +9,28 @@ import { cn } from "@/lib/utils";
 import { ArrowUpRight, CheckCircle2, MoreVertical, Clock, Radio, Users, BarChart, Eye, XCircle } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 
-export default function Dashboard() {
+export default function CandidatesPage() {
 
-  const statusIcons: { [key: string]: React.ReactNode } = {
+  const statusIcons = {
     Completed: <CheckCircle2 className="h-4 w-4 text-success" />,
     Scheduled: <Clock className="h-4 w-4 text-blue-500" />,
     'In-Progress': <Radio className="h-4 w-4 text-inprogress animate-pulse" />,
     Expired: <Clock className="h-4 w-4 text-error" />,
     'Failed Round 1': <XCircle className="h-4 w-4 text-error" />,
     'Failed Round 2': <XCircle className="h-4 w-4 text-error" />,
-  };
+  }
+
+  const getStatusIcon = (status: keyof typeof statusIcons) => {
+    return statusIcons[status] || <Clock className="h-4 w-4 text-secondary" />;
+  }
 
   return (
     <>
-      <PageHeader title="Welcome Back, Manager" description="Here's a summary of your active interview pipelines." />
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-secondary">Total Candidates</CardTitle>
-            <Users className="h-4 w-4 text-secondary" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-primary">{candidates.length}</div>
-            <p className="text-xs text-secondary">+2 since last week</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-secondary">Interviews Completed</CardTitle>
-            <CheckCircle2 className="h-4 w-4 text-secondary" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-primary">{candidates.filter(c => c.status === 'Completed').length}</div>
-            <p className="text-xs text-secondary">+5 this month</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-secondary">Avg. Overall Score</CardTitle>
-            <BarChart className="h-4 w-4 text-secondary" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-primary">81.5</div>
-            <p className="text-xs text-secondary">Across all completed interviews</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-secondary">Pending Reviews</CardTitle>
-            <Eye className="h-4 w-4 text-secondary" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-primary">3</div>
-            <p className="text-xs text-secondary">Awaiting your decision</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card className="mt-8">
+      <PageHeader title="Candidates" description="Review and manage all candidates in the pipeline." />
+      
+      <Card>
         <CardHeader>
-          <CardTitle>Recent Interviews</CardTitle>
+          <CardTitle>All Candidates</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
@@ -76,9 +38,9 @@ export default function Dashboard() {
               <TableRow>
                 <TableHead>Candidate</TableHead>
                 <TableHead>Role</TableHead>
-                <TableHead>Score</TableHead>
+                <TableHead>Overall Score</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Date</TableHead>
+                <TableHead>Interview Date</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -112,7 +74,7 @@ export default function Dashboard() {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      {statusIcons[candidate.status]}
+                      {getStatusIcon(candidate.status)}
                       <span>{candidate.status}</span>
                     </div>
                   </TableCell>
