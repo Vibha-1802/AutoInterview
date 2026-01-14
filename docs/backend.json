@@ -1,0 +1,352 @@
+{
+  "entities": {
+    "Avatar": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Avatar",
+      "type": "object",
+      "description": "Represents an AI interview avatar, including its configuration and performance metrics.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Avatar entity."
+        },
+        "role": {
+          "type": "string",
+          "description": "The role the avatar is designed to interview for (e.g., SDE-DSA, Frontend, HR)."
+        },
+        "difficultyLevel": {
+          "type": "string",
+          "description": "The difficulty level of the interview avatar (e.g., Easy, Medium, Hard)."
+        },
+        "questionTypes": {
+          "type": "array",
+          "description": "Types of questions the avatar asks (e.g., coding, behavioral, system design).",
+          "items": {
+            "type": "string"
+          }
+        },
+        "timeLimit": {
+          "type": "number",
+          "description": "The time limit for the interview in minutes."
+        },
+        "evaluationCriteria": {
+          "type": "string",
+          "description": "The criteria used to evaluate candidates (e.g., technical skills, communication skills, problem-solving skills)."
+        },
+        "active": {
+          "type": "boolean",
+          "description": "Indicates whether the avatar is active and available for interviews."
+        },
+        "performanceAnalytics": {
+          "type": "string",
+          "description": "Data relating to the performance of the avatar."
+        }
+      },
+      "required": [
+        "id",
+        "role"
+      ]
+    },
+    "Candidate": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Candidate",
+      "type": "object",
+      "description": "Represents a candidate taking an interview.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Candidate entity."
+        },
+        "firstName": {
+          "type": "string",
+          "description": "The first name of the candidate."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "The last name of the candidate."
+        },
+        "email": {
+          "type": "string",
+          "description": "The email address of the candidate.",
+          "format": "email"
+        },
+        "role": {
+          "type": "string",
+          "description": "The role the candidate is applying for."
+        }
+      },
+      "required": [
+        "id",
+        "firstName",
+        "lastName",
+        "email",
+        "role"
+      ]
+    },
+    "Interview": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Interview",
+      "type": "object",
+      "description": "Represents an interview session, including the candidate, avatar, and results.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Interview entity."
+        },
+        "candidateId": {
+          "type": "string",
+          "description": "Reference to Candidate. (Relationship: Candidate 1:N Interview)"
+        },
+        "avatarId": {
+          "type": "string",
+          "description": "Reference to Avatar. (Relationship: Avatar 1:N Interview)"
+        },
+        "scheduledTime": {
+          "type": "string",
+          "description": "The date and time the interview is scheduled for.",
+          "format": "date-time"
+        },
+        "startTime": {
+          "type": "string",
+          "description": "The date and time the interview started.",
+          "format": "date-time"
+        },
+        "endTime": {
+          "type": "string",
+          "description": "The date and time the interview ended.",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "description": "The status of the interview (e.g., scheduled, in-progress, completed, expired)."
+        },
+        "overallScore": {
+          "type": "number",
+          "description": "The overall score of the interview."
+        },
+        "technicalScore": {
+          "type": "number",
+          "description": "The technical score of the candidate in the interview."
+        },
+        "communicationScore": {
+          "type": "number",
+          "description": "The communication score of the candidate in the interview."
+        },
+        "problemSolvingScore": {
+          "type": "number",
+          "description": "The problem-solving score of the candidate in the interview."
+        },
+        "cultureFitScore": {
+          "type": "number",
+          "description": "The culture fit score of the candidate in the interview."
+        },
+        "recommendation": {
+          "type": "string",
+          "description": "The overall recommendation for the candidate (e.g., Strong Hire, Hire, Maybe, No Hire)."
+        }
+      },
+      "required": [
+        "id",
+        "candidateId",
+        "avatarId",
+        "scheduledTime",
+        "status"
+      ]
+    },
+    "Question": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Question",
+      "type": "object",
+      "description": "Represents a question in the question bank.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Question entity."
+        },
+        "questionText": {
+          "type": "string",
+          "description": "The text of the question."
+        },
+        "topic": {
+          "type": "string",
+          "description": "The topic of the question (e.g., Arrays, Trees, Dynamic Programming)."
+        },
+        "difficulty": {
+          "type": "string",
+          "description": "The difficulty level of the question (e.g., Easy, Medium, Hard)."
+        },
+        "questionType": {
+          "type": "string",
+          "description": "The type of the question (e.g., coding, multiple choice, short answer, system design)."
+        },
+        "correctAnswer": {
+          "type": "string",
+          "description": "The correct answer to the question (if applicable)."
+        }
+      },
+      "required": [
+        "id",
+        "questionText",
+        "topic",
+        "difficulty",
+        "questionType"
+      ]
+    },
+    "InterviewRound": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "InterviewRound",
+      "type": "object",
+      "description": "Represents a round within an interview.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the InterviewRound entity."
+        },
+        "interviewId": {
+          "type": "string",
+          "description": "Reference to Interview. (Relationship: Interview 1:N InterviewRound)"
+        },
+        "roundNumber": {
+          "type": "number",
+          "description": "The number of the round (1, 2, 3)."
+        },
+        "score": {
+          "type": "number",
+          "description": "The score for the round."
+        },
+        "passed": {
+          "type": "boolean",
+          "description": "Indicates whether the candidate passed the round."
+        },
+        "questionIds": {
+          "type": "array",
+          "description": "References to Questions. (Relationship: Question N:N InterviewRound)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "candidateAnswers": {
+          "type": "array",
+          "description": "The answers provided by the candidate for each question in the round.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "feedback": {
+          "type": "string",
+          "description": "Feedback on the candidate's performance in the round."
+        }
+      },
+      "required": [
+        "id",
+        "interviewId",
+        "roundNumber",
+        "score",
+        "passed"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/avatars/{avatarId}",
+        "definition": {
+          "entityName": "Avatar",
+          "schema": {
+            "$ref": "#/backend/entities/Avatar"
+          },
+          "description": "Stores AI interview avatars, including configurations like role, difficulty, question types, and performance analytics.",
+          "params": [
+            {
+              "name": "avatarId",
+              "description": "Unique identifier for the Avatar entity."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/candidates/{candidateId}",
+        "definition": {
+          "entityName": "Candidate",
+          "schema": {
+            "$ref": "#/backend/entities/Candidate"
+          },
+          "description": "Stores candidate information, including personal details and the role they are applying for.",
+          "params": [
+            {
+              "name": "candidateId",
+              "description": "Unique identifier for the Candidate entity."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/candidates/{candidateId}/interviews/{interviewId}",
+        "definition": {
+          "entityName": "Interview",
+          "schema": {
+            "$ref": "#/backend/entities/Interview"
+          },
+          "description": "Stores interview session details, including candidate and avatar references, scheduled time, status, and overall scores. The path establishes ownership of the interview by the candidate.",
+          "params": [
+            {
+              "name": "candidateId",
+              "description": "Unique identifier for the Candidate entity."
+            },
+            {
+              "name": "interviewId",
+              "description": "Unique identifier for the Interview entity."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/questions/{questionId}",
+        "definition": {
+          "entityName": "Question",
+          "schema": {
+            "$ref": "#/backend/entities/Question"
+          },
+          "description": "Stores questions for the question bank, including question text, topic, difficulty, and question type.",
+          "params": [
+            {
+              "name": "questionId",
+              "description": "Unique identifier for the Question entity."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/candidates/{candidateId}/interviews/{interviewId}/rounds/{roundId}",
+        "definition": {
+          "entityName": "InterviewRound",
+          "schema": {
+            "$ref": "#/backend/entities/InterviewRound"
+          },
+          "description": "Stores details for each round within an interview, including the round number, score, pass/fail status, questions asked, and candidate answers. This is a subcollection of interviews, path-based ownership inherets the candidate authorization.",
+          "params": [
+            {
+              "name": "candidateId",
+              "description": "Unique identifier for the Candidate entity."
+            },
+            {
+              "name": "interviewId",
+              "description": "Unique identifier for the Interview entity."
+            },
+            {
+              "name": "roundId",
+              "description": "Unique identifier for the InterviewRound entity."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "This Firestore data structure is designed to support a multi-round interview system, focusing on automation, scalability, and robust security. The structure is optimized for Authorization Independence, QAPs, and debuggability, following the core design principles outlined. \n\n**Authorization Independence:** The design avoids `get()` calls in security rules by denormalizing data where necessary. Specifically, for collaborative data, such as questions associated with an interview, ownership or access rights are denormalized to each document within the subcollection, eliminating hierarchical dependencies.\n\n**Structural Segregation:** The data is segregated into different collections based on their security requirements. For instance, `questions` are stored separately based on the interview track (DSA, CS Fundamentals, System Design), isolating them from interview-specific data. This simplifies the security rules by ensuring that all documents within a collection share the same access control requirements.\n\n**Access Modeling:** The structure uses a combination of path-based ownership and membership maps. Interviews are stored as subcollections of candidates (`/candidates/{candidateId}/interviews/{interviewId}`), establishing a clear ownership hierarchy. This structure is highly secure and efficient for ownership-based security rules. \n\n**QAPs (Rules are not Filters):** The structure supports secure `list` operations. For example, listing interviews for a specific candidate can be secured using path-based rules. Questions are segregated based on their type enabling secure listing of questions based on the round or question type.\n\n**Invariants:** The structure supports the integrity of ownership, timestamps, and denormalized data. The `candidateId` within the `interviews` collection ensures the integrity of ownership. Timestamps for interview scheduling, start, and end times are maintained within the `interviews` document.\n\n**Question Bank Structure:** Separate collections for each question type (DSA, CS Fundamentals, System Design) are maintained to allow for easier management and retrieval of questions based on the interview round. This also helps in applying specific security rules for each type of question.\n\n**Denormalization:** While the design primarily leverages path-based ownership to infer permissions, if collaborative access to interview results or specific rounds is required, the relevant user IDs and roles would be denormalized into a `members` map within the `interview` or `interviewRound` documents. However, based on the use case, direct ownership is favored to minimize complexity and ensure robust, scalable rules.\n"
+  }
+}

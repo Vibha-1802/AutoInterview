@@ -1,0 +1,193 @@
+/**
+ * # Firestore Security Rules: SDE Avatar Interview Platform
+ *
+ * ## Core Philosophy
+ * This ruleset enforces a strict user-ownership model, ensuring that candidates can only access and manage their own interview data. The primary goal is to protect sensitive candidate information while allowing the application to function seamlessly. Publicly readable data, such as interview avatar definitions and question banks, are made available to any signed-in user but are protected from unauthorized modification.
+ *
+ * ## Data Structure
+ * The data is organized hierarchically to reflect ownership:
+ * - `/candidates/{candidateId}`: Each candidate's root document, where `candidateId` matches their authentication UID.
+ * - `/candidates/{candidateId}/interviews/{interviewId}`: A subcollection containing all interviews belonging to that specific candidate.
+ * - `/candidates/{candidateId}/interviews/{interviewId}/rounds/{roundId}`: A subcollection storing the detailed rounds for a specific interview.
+ *
+ * Top-level collections like `/avatars` and `/questions` store public configuration data that is read-only for candidates.
+ *
+ * ## Key Security Decisions
+ * - **Default Deny:** All access is denied by default. Permissions are granted explicitly.
+ * - **User Data Privacy:** Users are strictly forbidden from listing or accessing the data of other users. All access to `/candidates/{candidateId}` and its subcollections requires the user's UID to match the `candidateId` in the path.
+ * - **Admin-less Write Protection:** Public collections like `/avatars` and `/questions` are configured to be read-only for clients. Writes are disallowed entirely, as an admin role has not been defined. This provides a secure default, preventing any user from modifying the core question bank or interview configurations.
+ * - **Relational Integrity:** Rules enforce that the `candidateId` and `interviewId` fields within documents match the corresponding IDs in the document path. This prevents data from being associated with the wrong owner.
+ *
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ------------------------------------------------------------------------
+    // Helper Functions
+    // ------------------------------------------------------------------------
+
+    /**
+     * Checks if a user is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * Checks if the currently authenticated user's UID matches the provided userId.
+     * This is the foundation of the user-ownership model.
+     * @param userId The user ID to check against the request's auth UID.
+     */
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    /**
+     * Checks if the user is the owner and the document already exists.
+     * Used for safe update and delete operations.
+     * @param userId The user ID to check ownership against.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * Validates that the candidate's ID in the new document data matches the
+     * document ID in the path, enforcing relational integrity on creation.
+     */
+    function hasValidCandidateData(candidateId) {
+      return request.resource.data.id == candidateId;
+    }
+    
+    /**
+     * Ensures the candidate ID remains unchanged during an update.
+     */
+    function isCandidateIdImmutable() {
+      return request.resource.data.id == resource.data.id;
+    }
+
+    /**
+     * Validates that the interview's candidateId points back to the owner in the path.
+     */
+    function isCreatingValidInterview(candidateId) {
+      return request.resource.data.candidateId == candidateId;
+    }
+
+    /**
+     * Ensures the interview's candidateId cannot be changed after creation.
+     */
+    function isInterviewOwnerImmutable() {
+      return request.resource.data.candidateId == resource.data.id.candidateId;
+    }
+    
+    /**
+     * Validates that the round's interviewId points back to the parent interview.
+     */
+    function isCreatingValidRound(interviewId) {
+      return request.resource.data.interviewId == interviewId;
+    }
+
+    /**
+     * Ensures the round's interviewId cannot be changed after creation.
+     */
+    function isRoundParentImmutable() {
+      return request.resource.data.interviewId == resource.data.id.interviewId;
+    }
+
+    // ------------------------------------------------------------------------
+    // Public Read-Only Collections
+    // ------------------------------------------------------------------------
+
+    /**
+     * @description Defines AI interview avatar configurations. This data is public
+     *              to all signed-in users but cannot be modified by them.
+     * @path        /avatars/{avatarId}
+     * @allow       (get, list) An authenticated user can read any avatar configuration.
+     * @deny        (create, update, delete) Any user attempts to modify an avatar.
+     * @principle   Public read-only access for application configuration data. Writes
+     *              are disabled pending implementation of an admin role.
+     */
+    match /avatars/{avatarId} {
+      allow get: if isSignedIn();
+      allow list: if isSignedIn();
+      allow create: if false; // Admin-only functionality
+      allow update: if false; // Admin-only functionality
+      allow delete: if false; // Admin-only functionality
+    }
+
+    /**
+     * @description The central question bank for all interview types. This data is
+     *              public to all signed-in users to populate interviews but
+     *              cannot be modified by them.
+     * @path        /questions/{questionId}
+     * @allow       (get, list) An authenticated user can read any question.
+     * @deny        (create, update, delete) Any user attempts to add or modify a question.
+     * @principle   Public read-only access for application content. Writes
+     *              are disabled pending implementation of an admin role.
+     */
+    match /questions/{questionId} {
+      allow get: if isSignedIn();
+      allow list: if isSignedIn();
+      allow create: if false; // Admin-only functionality
+      allow update: if false; // Admin-only functionality
+      allow delete: if false; // Admin-only functionality
+    }
+
+    // ------------------------------------------------------------------------
+    // User-Owned Data
+    // ------------------------------------------------------------------------
+
+    /**
+     * @description Manages candidate profiles. Each user can create and manage
+     *              their own profile but cannot see anyone else's.
+     * @path        /candidates/{candidateId}
+     * @allow       (create) A new user creates their own candidate profile.
+     * @allow       (get, update) A user accesses or updates their own profile.
+     * @deny        (list) A user tries to list all candidates in the system.
+     * @deny        (get) A user tries to read another user's candidate profile.
+     * @principle   Restricts access to a user's own data tree (Ownership).
+     */
+    match /candidates/{candidateId} {
+      allow get: if isOwner(candidateId);
+      allow list: if false; // Prevent listing all users
+      allow create: if isOwner(candidateId) && hasValidCandidateData(candidateId);
+      allow update: if isExistingOwner(candidateId) && isCandidateIdImmutable();
+      allow delete: if isExistingOwner(candidateId);
+
+      /**
+       * @description Manages interviews for a specific candidate. Access is inherited
+       *              from the parent candidate document.
+       * @path        /candidates/{candidateId}/interviews/{interviewId}
+       * @allow       (create) A user starts a new interview for themselves.
+       * @allow       (get, list, update) A user manages their own interviews.
+       * @deny        (get) A user tries to access an interview belonging to another user.
+       * @principle   Enforces document ownership for all operations.
+       */
+      match /interviews/{interviewId} {
+        allow get: if isOwner(candidateId);
+        allow list: if isOwner(candidateId);
+        allow create: if isOwner(candidateId) && isCreatingValidInterview(candidateId);
+        allow update: if isExistingOwner(candidateId) && isInterviewOwnerImmutable();
+        allow delete: if isExistingOwner(candidateId);
+
+        /**
+         * @description Manages the specific rounds within a candidate's interview.
+         *              Access is inherited from the parent candidate.
+         * @path        /candidates/{candidateId}/interviews/{interviewId}/rounds/{roundId}
+         * @allow       (create) The system creates a new round for the user's interview.
+         * @allow       (get, list, update) A user accesses the rounds of their own interview.
+         * @deny        (get) A user tries to access an interview round of another user.
+         * @principle   Nested ownership, ensuring data is only accessible to the root owner.
+         */
+        match /rounds/{roundId} {
+          allow get: if isOwner(candidateId);
+          allow list: if isOwner(candidateId);
+          allow create: if isOwner(candidateId) && isCreatingValidRound(interviewId);
+          allow update: if isExistingOwner(candidateId) && isRoundParentImmutable();
+          allow delete: if isExistingOwner(candidateId);
+        }
+      }
+    }
+  }
+}
